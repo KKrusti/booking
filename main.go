@@ -1,6 +1,9 @@
 package main
 
-import "github.com/gofiber/fiber"
+import (
+	"github.com/KKrusti/booking/internal/handlers"
+	"github.com/gofiber/fiber"
+)
 
 func main() {
 	app := fiber.New()
@@ -9,6 +12,6 @@ func main() {
 }
 
 func setupRoutes(app *fiber.App) {
-	app.Post("v1/stats", nil)
+	app.Post("v1/stats", handlers.CalculateStats)
 	app.Post("v1/maximize", nil)
 }

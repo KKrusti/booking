@@ -2,11 +2,11 @@ package services
 
 import "github.com/KKrusti/booking/internal/core/domain"
 
-func CalcStats(requests domain.BookingRequest) (float64, float64, float64) {
-	profit := make([]float64, len(requests.Requests))
+func CalcStats(requests []domain.Request) (float64, float64, float64) {
+	profit := make([]float64, len(requests))
 	minimum, maximum := 0.0, 0.0
-	for i, request := range requests.Requests {
-		profit[i] = calcProfit(request)
+	for i := 0; i < len(requests); i++ {
+		profit[i] = calcProfit(requests[i])
 		minimum = calcMinimum(i, minimum, profit[i])
 		maximum = calcMaximum(maximum, profit[i])
 	}

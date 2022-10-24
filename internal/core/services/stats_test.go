@@ -3,21 +3,14 @@ package services
 import (
 	"github.com/KKrusti/booking/internal/core/domain"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"testing"
-	"time"
 )
 
-const layout = "2006-02-01"
-
 func Test_CalcAverage(t *testing.T) {
-	checkin1, err := time.Parse(layout, "2020-01-01")
-	require.NoError(t, err)
-	request1 := getRequest("bookata_XY123", checkin1, 5, 200, 20)
+	request1 := getRequest("bookata_XY123", "2020-01-01", 5, 200, 20)
 
-	checkin2, err := time.Parse(layout, "2020-01-04")
-	request2 := getRequest("kayete_PP234", checkin2, 4, 156, 22)
-	requests := domain.BookingRequest{Requests: []domain.Request{request1, request2}}
+	request2 := getRequest("kayete_PP234", "2020-01-04", 4, 156, 22)
+	requests := []domain.Request{request1, request2}
 
 	average, minimum, maximum := CalcStats(requests)
 
@@ -82,7 +75,7 @@ func Test_CalcMaximum(t *testing.T) {
 	assert.Equal(t, value, maximum)
 }
 
-func getRequest(id string, checkin time.Time, nights int, sellingRate, margin float64) domain.Request {
+func getRequest(id string, checkin string, nights int, sellingRate, margin float64) domain.Request {
 	return domain.Request{
 		Id:          id,
 		Checkin:     checkin,
