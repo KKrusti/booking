@@ -9,7 +9,7 @@ We will create an API for this purpose. This API will contain two endpoints; you
 https://app.swaggerhub.com/apis-docs/BlackfireSFL/BackendChallenge/1.0.1
 
 **/stats endpoint**
-
+-
 Given a list of booking requests, return the average, minimum, and maximum profit per night taking into account all the booking requests in the payload. The concept “profit per night” follows this calculation:
 
 *(selling_rate * margin (percentage)) / nights*
@@ -19,7 +19,7 @@ Given a list of booking requests, return the average, minimum, and maximum profi
 ![img_1.png](resources/img_1.png)
 
 **/maximize endpoint**
-
+-
 Given a list of booking requests, return the best combination of requests that maximizes total profits.
 
 Acceptance Criteria
