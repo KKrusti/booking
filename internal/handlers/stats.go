@@ -25,9 +25,5 @@ func CalculateStats(c *fiber.Ctx) {
 		MaximumNight: maximum,
 	}
 
-	c.JSON(fiber.Map{
-		"error": false,
-		"msg":   nil,
-		"book":  statsResponse,
-	})
+	c.JSON(statsResponse)
 }
