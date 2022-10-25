@@ -13,5 +13,5 @@ func main() {
 
 func setupRoutes(app *fiber.App) {
 	app.Post("v1/stats", handlers.CalculateStats)
-	app.Post("v1/maximize", nil)
+	app.Post("v1/maximize", handlers.Maximize)
 }
