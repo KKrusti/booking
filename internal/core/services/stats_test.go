@@ -2,7 +2,7 @@ package services
 
 import (
 	utils "github.com/KKrusti/booking/internal/core"
-	"github.com/KKrusti/booking/internal/core/domain"
+	"github.com/KKrusti/booking/internal/core/domain/entities"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -11,7 +11,7 @@ func Test_CalcAverage(t *testing.T) {
 	request1 := getRequest("bookata_XY123", "2020-01-01", 5, 200, 20)
 
 	request2 := getRequest("kayete_PP234", "2020-01-04", 4, 156, 22)
-	requests := []domain.Request{request1, request2}
+	requests := []entities.Request{request1, request2}
 
 	average, minimum, maximum := CalcStats(requests)
 
@@ -34,7 +34,7 @@ func Test_calcAverageNight(t *testing.T) {
 }
 
 func Test_calcProfit(t *testing.T) {
-	request := domain.Request{
+	request := entities.Request{
 		Id:          "test",
 		Nights:      5,
 		SellingRate: 850,
@@ -115,8 +115,8 @@ func Test_round(t *testing.T) {
 	}
 }
 
-func getRequest(id string, checkin string, nights int, sellingRate, margin float64) domain.Request {
-	return domain.Request{
+func getRequest(id string, checkin string, nights int, sellingRate, margin float64) entities.Request {
+	return entities.Request{
 		Id:          id,
 		Checkin:     checkin,
 		Nights:      nights,

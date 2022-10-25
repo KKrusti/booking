@@ -1,4 +1,4 @@
-package domain
+package entities
 
 type StatsResponse struct {
 	AverageNight float64 `json:"avg_night"`

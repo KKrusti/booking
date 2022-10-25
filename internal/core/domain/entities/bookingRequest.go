@@ -1,4 +1,4 @@
-package domain
+package entities
 
 type Request struct {
 	Id          string  `json:"request_id"`

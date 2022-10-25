@@ -2,10 +2,10 @@ package services
 
 import (
 	"github.com/KKrusti/booking/internal/core"
-	"github.com/KKrusti/booking/internal/core/domain"
+	"github.com/KKrusti/booking/internal/core/domain/entities"
 )
 
-func CalcStats(requests []domain.Request) (float64, float64, float64) {
+func CalcStats(requests []entities.Request) (float64, float64, float64) {
 	profit := make([]float64, len(requests))
 	minimum, maximum := 0.0, 0.0
 	for i := 0; i < len(requests); i++ {
@@ -29,7 +29,7 @@ func calcAverageNight(profits []float64) float64 {
 
 }
 
-func calcProfit(request domain.Request) float64 {
+func calcProfit(request entities.Request) float64 {
 	totalProfit := (request.Margin / 100) * request.SellingRate
 	profit := totalProfit / float64(request.Nights)
 	return utils.Round(profit)
