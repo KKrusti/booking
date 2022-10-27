@@ -1,36 +1,56 @@
 package services
 
 import (
-	utils "github.com/KKrusti/booking/internal/core"
 	"github.com/KKrusti/booking/internal/core/domain/entities"
 	"sort"
-	"time"
+	"sync"
 )
 
-func Maximize(request []entities.Request) entities.MaxResponse {
-	return entities.MaxResponse{}
+func Maximize(bookings []entities.Booking) entities.StatsCalculation {
+	return processAllCombinations(bookings)
 }
 
-func isValidCombination(requests []entities.Request) bool {
-	sortByCheckinDate(requests)
-	for i := 0; i < len(requests)-1; i++ {
-		currentCheckout := getCheckoutDate(requests[i])
-		nextCheckin := utils.StringToTime(requests[i+1].Checkin)
-		if nextCheckin.Before(currentCheckout) {
-			return false
-		}
-	}
-	return true
+func processAllCombinations(bookings []entities.Booking) entities.StatsCalculation {
+	validCombinations := generateCombinationsAndGetValid(bookings)
+	allCalculations := calculateProfits(validCombinations)
+	sortByMostProfitableBooking(allCalculations)
+	return allCalculations[0]
 }
 
-func sortByCheckinDate(requests []entities.Request) {
-	sort.Slice(requests[:], func(i, j int) bool {
-		return requests[i].Checkin < requests[j].Checkin
+func generateCombinationsAndGetValid(bookings []entities.Booking) [][]entities.Booking {
+	combinationsChan := make(chan []entities.Booking)
+	wg := &sync.WaitGroup{}
+
+	go entities.GenerateAllCombinations(combinationsChan, wg, bookings)
+
+	return checkValidCombinations(combinationsChan, wg)
+}
+
+func sortByMostProfitableBooking(calculations []entities.StatsCalculation) {
+	sort.Slice(calculations[:], func(i, j int) bool {
+		return calculations[i].TotalProfit > calculations[j].TotalProfit
 	})
 }
 
-func getCheckoutDate(request entities.Request) time.Time {
-	checkinDate := utils.StringToTime(request.Checkin)
-	checkoutDate := checkinDate.AddDate(0, 0, request.Nights)
-	return checkoutDate
+func calculateProfits(combinations [][]entities.Booking) []entities.StatsCalculation {
+	var calculationsPerCombination []entities.StatsCalculation
+	for _, booking := range combinations {
+		statsForBookings := CalcStats(booking)
+		calculationsPerCombination = append(calculationsPerCombination, statsForBookings)
+	}
+	return calculationsPerCombination
+}
+
+// checkValidCombinations method that receives combinations through a channel and checks if they're valid or not. Only if it's
+// a valid combination it's sent through another channel to process it.
+func checkValidCombinations(combinations chan []entities.Booking, wg *sync.WaitGroup) [][]entities.Booking {
+	var validCombinations [][]entities.Booking
+	for combination := range combinations {
+		if entities.IsValidCombination(combination) {
+			validCombinations = append(validCombinations, combination)
+		}
+		wg.Done()
+	}
+	wg.Wait()
+	return validCombinations
 }

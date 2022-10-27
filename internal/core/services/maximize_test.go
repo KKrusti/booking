@@ -8,7 +8,7 @@ import (
 
 func Test_valid_combinations(t *testing.T) {
 	type args struct {
-		request []entities.Request
+		request []entities.Booking
 	}
 	tests := []struct {
 		name string
@@ -18,7 +18,7 @@ func Test_valid_combinations(t *testing.T) {
 		{
 			name: "large distance",
 			args: args{
-				request: []entities.Request{
+				request: []entities.Booking{
 					{
 						Checkin: "2018-01-01",
 						Nights:  5,
@@ -34,7 +34,7 @@ func Test_valid_combinations(t *testing.T) {
 		{
 			name: "finish and start same day",
 			args: args{
-				request: []entities.Request{
+				request: []entities.Booking{
 					{
 						Checkin: "2018-01-01",
 						Nights:  5,
@@ -50,7 +50,7 @@ func Test_valid_combinations(t *testing.T) {
 		{
 			name: "overlap",
 			args: args{
-				request: []entities.Request{
+				request: []entities.Booking{
 					{
 						Checkin: "2018-01-01",
 						Nights:  5,
@@ -66,7 +66,7 @@ func Test_valid_combinations(t *testing.T) {
 		{
 			name: "unsorted but valid",
 			args: args{
-				request: []entities.Request{
+				request: []entities.Booking{
 					{
 						Checkin: "2018-01-01",
 						Nights:  5,
@@ -86,7 +86,7 @@ func Test_valid_combinations(t *testing.T) {
 		{
 			name: "unsorted and overlap",
 			args: args{
-				request: []entities.Request{
+				request: []entities.Booking{
 					{
 						Checkin: "2018-01-01",
 						Nights:  5,
@@ -106,7 +106,7 @@ func Test_valid_combinations(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := isValidCombination(tt.args.request)
+			got := entities.IsValidCombination(tt.args.request)
 			assert.Equal(t, tt.want, got)
 		})
 	}

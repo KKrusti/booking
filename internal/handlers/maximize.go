@@ -7,7 +7,7 @@ import (
 )
 
 func Maximize(c *fiber.Ctx) {
-	bookingRequest := &[]entities.Request{}
+	bookingRequest := &[]entities.Booking{}
 
 	if err := c.BodyParser(bookingRequest); err != nil {
 		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -17,7 +17,8 @@ func Maximize(c *fiber.Ctx) {
 	}
 
 	//TODO add validator?
-	services.Maximize(*bookingRequest)
+	statsCalculation := services.Maximize(*bookingRequest)
+	statsResponse := statsCalculation.ToMaxResponse()
 
-	//c.JSON(statsResponse)
+	c.JSON(statsResponse)
 }

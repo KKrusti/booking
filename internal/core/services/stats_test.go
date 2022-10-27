@@ -8,21 +8,21 @@ import (
 )
 
 func Test_CalcAverage(t *testing.T) {
-	request1 := getRequest("bookata_XY123", "2020-01-01", 5, 200, 20)
+	request1 := entities.GetBooking("bookata_XY123", "2020-01-01", 5, 200, 20)
 
-	request2 := getRequest("kayete_PP234", "2020-01-04", 4, 156, 22)
-	requests := []entities.Request{request1, request2}
+	request2 := entities.GetBooking("kayete_PP234", "2020-01-04", 4, 156, 22)
+	requests := []entities.Booking{request1, request2}
 
-	average, minimum, maximum := CalcStats(requests)
+	statsCalculator := CalcStats(requests)
 
 	expectedAverage := 8.29
-	assert.Equal(t, expectedAverage, average)
+	assert.Equal(t, expectedAverage, statsCalculator.AverageNight)
 
 	expectedMinimum := 8.0
-	assert.Equal(t, expectedMinimum, minimum)
+	assert.Equal(t, expectedMinimum, statsCalculator.MinimumNight)
 
 	expectedMaximum := 8.58
-	assert.Equal(t, expectedMaximum, maximum)
+	assert.Equal(t, expectedMaximum, statsCalculator.MaximumNight)
 }
 
 func Test_calcAverageNight(t *testing.T) {
@@ -31,21 +31,6 @@ func Test_calcAverageNight(t *testing.T) {
 	average := calcAverageNight(profits)
 	expectedAverage := 7.5
 	assert.Equal(t, expectedAverage, average)
-}
-
-func Test_calcProfit(t *testing.T) {
-	request := entities.Request{
-		Id:          "test",
-		Nights:      5,
-		SellingRate: 850,
-		Margin:      17,
-	}
-
-	profit := calcProfit(request)
-	expectedProfit := 28.9
-
-	assert.Equal(t, expectedProfit, profit)
-
 }
 
 func Test_calcMinimum_first_element(t *testing.T) {
@@ -112,15 +97,5 @@ func Test_round(t *testing.T) {
 			got := utils.Round(tt.args.n)
 			assert.Equal(t, tt.want, got)
 		})
-	}
-}
-
-func getRequest(id string, checkin string, nights int, sellingRate, margin float64) entities.Request {
-	return entities.Request{
-		Id:          id,
-		Checkin:     checkin,
-		Nights:      nights,
-		SellingRate: sellingRate,
-		Margin:      margin,
 	}
 }

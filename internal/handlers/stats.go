@@ -7,7 +7,7 @@ import (
 )
 
 func CalculateStats(c *fiber.Ctx) {
-	bookingRequest := &[]entities.Request{}
+	bookingRequest := &[]entities.Booking{}
 
 	if err := c.BodyParser(bookingRequest); err != nil {
 		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -18,12 +18,6 @@ func CalculateStats(c *fiber.Ctx) {
 
 	//TODO add validator?
 
-	average, minimum, maximum := services.CalcStats(*bookingRequest)
-	statsResponse := entities.StatsResponse{
-		AverageNight: average,
-		MinimumNight: minimum,
-		MaximumNight: maximum,
-	}
-
-	c.JSON(statsResponse)
+	stats := services.CalcStats(*bookingRequest)
+	c.JSON(entities.FromStatsCalculation(stats))
 }
