@@ -8,9 +8,7 @@ import (
 )
 
 func Maximize(request []entities.Request) entities.MaxResponse {
-	response := entities.MaxResponse{}
-
-	return response
+	return entities.MaxResponse{}
 }
 
 func isValidCombination(requests []entities.Request) bool {
