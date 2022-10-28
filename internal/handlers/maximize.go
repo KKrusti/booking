@@ -18,7 +18,7 @@ func Maximize(c *fiber.Ctx) {
 
 	//TODO add validator?
 	statsCalculation := services.Maximize(*bookingRequest)
-	statsResponse := statsCalculation.ToMaxResponse()
+	maxResponse := statsCalculation.ToMaxResponse()
 
-	c.JSON(statsResponse)
+	c.JSON(maxResponse)
 }
