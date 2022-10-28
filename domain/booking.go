@@ -119,6 +119,7 @@ func CalcStats(bookings []Booking) valueobjects.Stats {
 	for i := 0; i < len(bookings); i++ {
 		requestIds = append(requestIds, bookings[i].Id)
 		profitPerNight[i] = bookings[i].GetProfitPerNight()
+		totalProfit += bookings[i].CalcTotalProfit()
 		minimum = bookings[i].CalcMinimum(minimum)
 		if i == 0 {
 			minimum = bookings[i].GetProfitPerNight()
