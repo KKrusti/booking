@@ -8,6 +8,6 @@ type Stats struct {
 	TotalProfit  float64
 }
 
-func (stats Stats) SortByMostProfitable(comparison Stats) bool {
+func (stats Stats) IsMoreProfitableThan(comparison Stats) bool {
 	return stats.TotalProfit > comparison.TotalProfit
 }

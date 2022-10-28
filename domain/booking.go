@@ -91,7 +91,7 @@ func CreateBooking(id string, checkin string, nights int, sellingRate, margin fl
 }
 
 func (booking Booking) CalcMinimum(minimum float64) float64 {
-	profit := booking.GetProfit()
+	profit := booking.GetProfitPerNight()
 	if minimum >= profit {
 		return shared.Round(profit)
 	}
@@ -99,7 +99,7 @@ func (booking Booking) CalcMinimum(minimum float64) float64 {
 }
 
 func (booking Booking) CalcMaximum(maximum float64) float64 {
-	profit := booking.GetProfit()
+	profit := booking.GetProfitPerNight()
 	if maximum <= profit {
 		return shared.Round(profit)
 	}
@@ -107,7 +107,7 @@ func (booking Booking) CalcMaximum(maximum float64) float64 {
 	return shared.Round(maximum)
 }
 
-func (booking Booking) GetProfit() float64 {
+func (booking Booking) GetProfitPerNight() float64 {
 	return booking.CalcTotalProfit() / float64(booking.Nights)
 }
 
@@ -118,10 +118,10 @@ func CalcStats(bookings []Booking) valueobjects.Stats {
 	minimum, maximum, totalProfit, averageNight := 0.0, 0.0, 0.0, 0.0
 	for i := 0; i < len(bookings); i++ {
 		requestIds = append(requestIds, bookings[i].Id)
-		profitPerNight[i] = bookings[i].GetProfit()
+		profitPerNight[i] = bookings[i].GetProfitPerNight()
 		minimum = bookings[i].CalcMinimum(minimum)
 		if i == 0 {
-			minimum = bookings[i].GetProfit()
+			minimum = bookings[i].GetProfitPerNight()
 		}
 		maximum = bookings[i].CalcMaximum(maximum)
 	}

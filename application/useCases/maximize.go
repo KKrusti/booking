@@ -26,7 +26,7 @@ func generateCombinationsAndGetValid(bookings []domain.Booking) [][]domain.Booki
 
 func sortByMostProfitableBooking(calculations []valueobjects.Stats) {
 	sort.Slice(calculations[:], func(i, j int) bool {
-		return calculations[i].SortByMostProfitable(calculations[j])
+		return calculations[i].IsMoreProfitableThan(calculations[j])
 	})
 }
 
