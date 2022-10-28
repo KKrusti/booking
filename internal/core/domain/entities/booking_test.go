@@ -3,7 +3,6 @@ package entities
 import (
 	utils "github.com/KKrusti/booking/internal/core"
 	"github.com/stretchr/testify/assert"
-	"sync"
 	"testing"
 )
 
@@ -48,15 +47,12 @@ func Test_allCombinations(t *testing.T) {
 	}
 
 	ch := make(chan []Booking)
-	wg := &sync.WaitGroup{}
-	go GenerateAllCombinations(ch, wg, request)
+	go GenerateAllCombinations(ch, request)
 
 	var combination [][]Booking
 	for received := range ch {
-		wg.Done()
 		combination = append(combination, received)
 	}
-	wg.Wait()
 
 	assert.Equal(t, 7, len(combination))
 

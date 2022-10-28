@@ -19,5 +19,5 @@ func CalculateStats(c *fiber.Ctx) {
 	//TODO add validator?
 
 	stats := services.CalcStats(*bookingRequest)
-	c.JSON(entities.FromStatsCalculation(stats))
+	c.JSON(stats.ToStatsResponse())
 }

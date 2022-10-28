@@ -3,7 +3,6 @@ package entities
 import (
 	utils "github.com/KKrusti/booking/internal/core"
 	"sort"
-	"sync"
 	"time"
 )
 
@@ -54,11 +53,10 @@ func sortByCheckinDate(requests []Booking) {
 
 // GenerateAllCombinations method that generates all combinations for given Bookings and sends each one through a channel
 // to be processed as soon as it is generated.
-func GenerateAllCombinations(ch chan []Booking, wg *sync.WaitGroup, bookings []Booking) {
-	length := len(bookings)
+func GenerateAllCombinations(ch chan []Booking, bookings []Booking) {
 	defer close(ch)
+	length := len(bookings)
 	for subsetBits := 1; subsetBits < (1 << length); subsetBits++ {
-		wg.Add(1)
 		var subset []Booking
 		for booking := 0; booking < length; booking++ {
 			if (subsetBits>>booking)&1 == 1 {

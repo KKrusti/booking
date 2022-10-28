@@ -3,7 +3,6 @@ package services
 import (
 	"github.com/KKrusti/booking/internal/core/domain/entities"
 	"sort"
-	"sync"
 )
 
 func Maximize(bookings []entities.Booking) entities.StatsCalculation {
@@ -19,11 +18,10 @@ func processAllCombinations(bookings []entities.Booking) entities.StatsCalculati
 
 func generateCombinationsAndGetValid(bookings []entities.Booking) [][]entities.Booking {
 	combinationsChan := make(chan []entities.Booking)
-	wg := &sync.WaitGroup{}
 
-	go entities.GenerateAllCombinations(combinationsChan, wg, bookings)
+	go entities.GenerateAllCombinations(combinationsChan, bookings)
 
-	return checkValidCombinations(combinationsChan, wg)
+	return checkValidCombinations(combinationsChan)
 }
 
 func sortByMostProfitableBooking(calculations []entities.StatsCalculation) {
@@ -43,14 +41,12 @@ func calculateProfits(combinations [][]entities.Booking) []entities.StatsCalcula
 
 // checkValidCombinations method that receives combinations through a channel and checks if they're valid or not. Only if it's
 // a valid combination it's sent through another channel to process it.
-func checkValidCombinations(combinations chan []entities.Booking, wg *sync.WaitGroup) [][]entities.Booking {
+func checkValidCombinations(combinations chan []entities.Booking) [][]entities.Booking {
 	var validCombinations [][]entities.Booking
 	for combination := range combinations {
 		if entities.IsValidCombination(combination) {
 			validCombinations = append(validCombinations, combination)
 		}
-		wg.Done()
 	}
-	wg.Wait()
 	return validCombinations
 }
