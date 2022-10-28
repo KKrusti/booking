@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	"github.com/KKrusti/booking/internal/core/domain/entities"
-	"github.com/KKrusti/booking/internal/core/services"
+	"github.com/KKrusti/booking/application/useCases"
+	"github.com/KKrusti/booking/domain"
 	"github.com/gofiber/fiber"
 )
 
 func CalculateStats(c *fiber.Ctx) {
-	bookingRequest := &[]entities.Booking{}
+	bookingRequest := &[]domain.Booking{}
 
 	if err := c.BodyParser(bookingRequest); err != nil {
 		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -18,6 +18,6 @@ func CalculateStats(c *fiber.Ctx) {
 
 	//TODO add validator?
 
-	stats := services.CalcStats(*bookingRequest)
-	c.JSON(stats.ToStatsResponse())
+	stats := useCases.CalculateStats(*bookingRequest)
+	c.JSON(stats)
 }

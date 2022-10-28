@@ -1,7 +1,7 @@
-package entities
+package domain
 
 import (
-	utils "github.com/KKrusti/booking/internal/core"
+	utils "github.com/KKrusti/booking/shared"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -185,7 +185,7 @@ func Test_booking_getter(t *testing.T) {
 	sellingRate := float64(400)
 	margin := float64(13)
 
-	gotBooking := GetBooking(id, checkin, nights, sellingRate, margin)
+	gotBooking := CreateBooking(id, checkin, nights, sellingRate, margin)
 
 	expectedBooking := Booking{
 		Id:          id,
@@ -196,6 +196,24 @@ func Test_booking_getter(t *testing.T) {
 	}
 
 	assert.Equal(t, expectedBooking, gotBooking)
+}
+
+func Test_CalcAverage(t *testing.T) {
+	request1 := CreateBooking("bookata_XY123", "2020-01-01", 5, 200, 20)
+
+	request2 := CreateBooking("kayete_PP234", "2020-01-04", 4, 156, 22)
+	requests := []Booking{request1, request2}
+
+	statsCalculator := CalcStats(requests)
+
+	expectedAverage := 8.29
+	assert.Equal(t, expectedAverage, statsCalculator.AverageNight)
+
+	expectedMinimum := 8.0
+	assert.Equal(t, expectedMinimum, statsCalculator.MinimumNight)
+
+	expectedMaximum := 8.58
+	assert.Equal(t, expectedMaximum, statsCalculator.MaximumNight)
 }
 
 func TestCheckValidCombinations(t *testing.T) {
@@ -257,5 +275,12 @@ func TestCheckValidCombinations(t *testing.T) {
 	assert.Contains(t, gotCombinations, combination1)
 	assert.Contains(t, gotCombinations, combination2)
 	assert.NotContains(t, gotCombinations, combination3)
+}
 
+func Test_calcAverageNight(t *testing.T) {
+	profits := []float64{2.2, 4.6, 8, 15.2}
+
+	average := calcAverageNight(profits)
+	expectedAverage := 7.5
+	assert.Equal(t, expectedAverage, average)
 }
