@@ -43,22 +43,86 @@ func Test_calcMinimum_first_element(t *testing.T) {
 
 }
 
-func Test_calcMinimum(t *testing.T) {
-	value := float64(1)
-	previousMinimum := float64(50)
-
-	minimum := calcMinimum(1, value, previousMinimum)
-
-	assert.Equal(t, value, minimum)
+func Test_CalcMinimum(t *testing.T) {
+	type args struct {
+		index           int
+		value           float64
+		previousMinimum float64
+	}
+	tests := []struct {
+		name string
+		args args
+		want float64
+	}{
+		{
+			name: "first comparison",
+			args: args{
+				index:           0,
+				value:           float64(20),
+				previousMinimum: float64(0),
+			},
+			want: float64(20),
+		},
+		{
+			name: "not first value and comparison previous value smaller",
+			args: args{
+				index:           4,
+				value:           float64(20),
+				previousMinimum: float64(10),
+			},
+			want: float64(10),
+		},
+		{
+			name: "not first value and comparison previous value bigger",
+			args: args{
+				index:           4,
+				value:           float64(10),
+				previousMinimum: float64(20),
+			},
+			want: float64(10),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := calcMinimum(tt.args.index, tt.args.previousMinimum, tt.args.value)
+			assert.Equal(t, tt.want, got)
+		})
+	}
 }
 
 func Test_CalcMaximum(t *testing.T) {
-	value := float64(20)
-	previousMaximum := float64(10)
-
-	maximum := calcMaximum(previousMaximum, value)
-
-	assert.Equal(t, value, maximum)
+	type args struct {
+		value           float64
+		previousMaximum float64
+	}
+	tests := []struct {
+		name string
+		args args
+		want float64
+	}{
+		{
+			name: "previous value bigger",
+			args: args{
+				value:           float64(10),
+				previousMaximum: float64(20),
+			},
+			want: float64(20),
+		},
+		{
+			name: "current value bigger",
+			args: args{
+				value:           float64(20),
+				previousMaximum: float64(10),
+			},
+			want: float64(20),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := calcMaximum(tt.args.previousMaximum, tt.args.value)
+			assert.Equal(t, tt.want, got)
+		})
+	}
 }
 
 func Test_round(t *testing.T) {
