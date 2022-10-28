@@ -21,7 +21,7 @@ func generateCombinationsAndGetValid(bookings []entities.Booking) [][]entities.B
 
 	go entities.GenerateAllCombinations(combinationsChan, bookings)
 
-	return checkValidCombinations(combinationsChan)
+	return entities.CheckValidCombinations(combinationsChan)
 }
 
 func sortByMostProfitableBooking(calculations []entities.StatsCalculation) {
@@ -37,16 +37,4 @@ func calculateProfits(combinations [][]entities.Booking) []entities.StatsCalcula
 		calculationsPerCombination = append(calculationsPerCombination, statsForBookings)
 	}
 	return calculationsPerCombination
-}
-
-// checkValidCombinations method that receives combinations through a channel and checks if they're valid or not. Only if it's
-// a valid combination it's sent through another channel to process it.
-func checkValidCombinations(combinations chan []entities.Booking) [][]entities.Booking {
-	var validCombinations [][]entities.Booking
-	for combination := range combinations {
-		if entities.IsValidCombination(combination) {
-			validCombinations = append(validCombinations, combination)
-		}
-	}
-	return validCombinations
 }

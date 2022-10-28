@@ -31,8 +31,8 @@ func (booking Booking) GetCheckoutDate() time.Time {
 	return checkoutDate
 }
 
-// IsValidCombination checks whether a booking combination dates are compatible or if they overlap.
-func IsValidCombination(bookings []Booking) bool {
+// IsValidBooking checks whether a booking combination dates are compatible or if they overlap.
+func IsValidBooking(bookings []Booking) bool {
 	sortByCheckinDate(bookings)
 	for i := 0; i < len(bookings)-1; i++ {
 		currentCheckout := bookings[i].GetCheckoutDate()
@@ -65,6 +65,18 @@ func GenerateAllCombinations(ch chan []Booking, bookings []Booking) {
 		}
 		ch <- subset
 	}
+}
+
+// CheckValidCombinations method that receives combinations through a channel and checks if they're valid or not. Only if it's
+// a valid combination it's sent through another channel to process it.
+func CheckValidCombinations(combinations chan []Booking) [][]Booking {
+	var validCombinations [][]Booking
+	for combination := range combinations {
+		if IsValidBooking(combination) {
+			validCombinations = append(validCombinations, combination)
+		}
+	}
+	return validCombinations
 }
 
 func GetBooking(id string, checkin string, nights int, sellingRate, margin float64) Booking {

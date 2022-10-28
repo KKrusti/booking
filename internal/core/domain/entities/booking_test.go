@@ -72,7 +72,7 @@ func Test_allCombinations(t *testing.T) {
 	assert.Contains(t, combination, abc)
 }
 
-func Test_valid_combinations(t *testing.T) {
+func Test_validBooking(t *testing.T) {
 	type args struct {
 		request []Booking
 	}
@@ -172,7 +172,7 @@ func Test_valid_combinations(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := IsValidCombination(tt.args.request)
+			got := IsValidBooking(tt.args.request)
 			assert.Equal(t, tt.want, got)
 		})
 	}
@@ -196,4 +196,66 @@ func Test_booking_getter(t *testing.T) {
 	}
 
 	assert.Equal(t, expectedBooking, gotBooking)
+}
+
+func TestCheckValidCombinations(t *testing.T) {
+	ch := make(chan []Booking)
+
+	combination1 := []Booking{
+		{
+			Id:          "A",
+			Checkin:     "2020-05-01",
+			Nights:      4,
+			SellingRate: 600,
+			Margin:      21,
+		},
+		{
+			Id:          "B",
+			Checkin:     "2020-05-09",
+			Nights:      10,
+			SellingRate: 530,
+			Margin:      40,
+		},
+	}
+
+	combination2 := []Booking{
+		{
+			Id:          "A",
+			Checkin:     "2020-05-01",
+			Nights:      8,
+			SellingRate: 530,
+			Margin:      40,
+		},
+	}
+
+	combination3 := []Booking{
+		{
+			Id:          "A",
+			Checkin:     "2020-05-01",
+			Nights:      10,
+			SellingRate: 600,
+			Margin:      21,
+		},
+		{
+			Id:          "B",
+			Checkin:     "2020-05-09",
+			Nights:      10,
+			SellingRate: 530,
+			Margin:      40,
+		},
+	}
+
+	go func(ch chan []Booking) {
+		defer close(ch)
+		ch <- combination1
+		ch <- combination2
+		ch <- combination3
+	}(ch)
+
+	gotCombinations := CheckValidCombinations(ch)
+
+	assert.Contains(t, gotCombinations, combination1)
+	assert.Contains(t, gotCombinations, combination2)
+	assert.NotContains(t, gotCombinations, combination3)
+
 }
