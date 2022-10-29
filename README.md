@@ -75,3 +75,8 @@ To shut down the docker container use the following command
 ```
 docker-compose down
 ```
+In case the image is needed to rebuild use the commands
+```
+docker-compose build
+docker-compose up
+```

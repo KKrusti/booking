@@ -3,12 +3,13 @@ package main
 import (
 	"github.com/KKrusti/booking/infrastructure/rest"
 	"github.com/gofiber/fiber"
+	"log"
 )
 
 func main() {
 	app := fiber.New()
 	setupRoutes(app)
-	app.Listen(3000)
+	log.Fatal(app.Listen(3000))
 }
 
 func setupRoutes(app *fiber.App) {

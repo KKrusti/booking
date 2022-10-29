@@ -6,11 +6,11 @@ import (
 )
 
 type BookingsRequestDTO struct {
-	Id          string  `json:"request_id"`
-	Checkin     string  `json:"check_in"`
-	Nights      int     `json:"Nights"`
-	SellingRate float64 `json:"selling_rate"`
-	Margin      float64 `json:"Margin"`
+	Id          string  `validate:"required" json:"request_id"`
+	Checkin     string  `validate:"required,len=10" json:"check_in"`
+	Nights      int     `validate:"required,min=1" json:"nights"`
+	SellingRate float64 `validate:"required,min=1" json:"selling_rate"`
+	Margin      float64 `validate:"required,min=0" json:"margin"`
 }
 
 func mapDtoToDomain(dto []BookingsRequestDTO) valueobjects.Bookings {
