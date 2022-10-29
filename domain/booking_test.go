@@ -26,7 +26,7 @@ func Test_checkoutDate(t *testing.T) {
 		Checkin: "2018-05-01",
 	}
 
-	checkoutDate := booking.GetCheckoutDate()
+	checkoutDate := booking.getCheckoutDate()
 	expectedDate := utils.StringToTime("2018-05-06")
 
 	assert.Equal(t, expectedDate, checkoutDate)
@@ -172,7 +172,7 @@ func Test_validBooking(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := IsValidBooking(tt.args.request)
+			got := isValidBooking(tt.args.request)
 			assert.Equal(t, tt.want, got)
 		})
 	}

@@ -3,6 +3,7 @@ package shared
 import (
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"time"
 )
 
 func Test_round(t *testing.T) {
@@ -42,4 +43,14 @@ func Test_round(t *testing.T) {
 			assert.Equal(t, tt.want, got)
 		})
 	}
+}
+
+func Test_StringToTime(t *testing.T) {
+	stringDate := "2020-05-09"
+
+	inTime := StringToTime(stringDate)
+	expectedTime2 := time.Date(2020, 05, 9, 0, 0, 0, 0, time.UTC)
+
+	assert.Equal(t, expectedTime2, inTime)
+
 }

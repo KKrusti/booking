@@ -26,17 +26,17 @@ func (booking Booking) CalcProfit() float64 {
 	return shared.Round(profit)
 }
 
-func (booking Booking) GetCheckoutDate() time.Time {
+func (booking Booking) getCheckoutDate() time.Time {
 	checkinDate := shared.StringToTime(booking.Checkin)
 	checkoutDate := checkinDate.AddDate(0, 0, booking.Nights)
 	return checkoutDate
 }
 
 // IsValidBooking checks whether a booking combination dates are compatible or if they overlap.
-func IsValidBooking(bookings []Booking) bool {
+func isValidBooking(bookings []Booking) bool {
 	sortByCheckinDate(bookings)
 	for i := 0; i < len(bookings)-1; i++ {
-		currentCheckout := bookings[i].GetCheckoutDate()
+		currentCheckout := bookings[i].getCheckoutDate()
 		nextCheckin := shared.StringToTime(bookings[i+1].Checkin)
 		if nextCheckin.Before(currentCheckout) {
 			return false
@@ -73,7 +73,7 @@ func GenerateAllCombinations(ch chan []Booking, bookings []Booking) {
 func CheckValidCombinations(combinations chan []Booking) [][]Booking {
 	var validCombinations [][]Booking
 	for combination := range combinations {
-		if IsValidBooking(combination) {
+		if isValidBooking(combination) {
 			validCombinations = append(validCombinations, combination)
 		}
 	}
