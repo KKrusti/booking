@@ -1,27 +1,26 @@
 package useCases
 
 import (
-	"github.com/KKrusti/booking/domain"
 	"github.com/KKrusti/booking/domain/valueobjects"
 	"sort"
 )
 
-func Maximize(bookings []domain.Booking) valueobjects.Stats {
+func Maximize(bookings valueobjects.Bookings) valueobjects.Stats {
 	return processAllCombinations(bookings)
 }
 
-func processAllCombinations(bookings []domain.Booking) valueobjects.Stats {
+func processAllCombinations(bookings valueobjects.Bookings) valueobjects.Stats {
 	validCombinations := generateCombinationsAndGetValid(bookings)
 	allCalculations := calculateProfits(validCombinations)
 	sortByMostProfitableBooking(allCalculations)
 	return allCalculations[0]
 }
 
-func generateCombinationsAndGetValid(bookings []domain.Booking) [][]domain.Booking {
-	combinationsChan := make(chan []domain.Booking)
-	go domain.GenerateAllCombinations(combinationsChan, bookings)
+func generateCombinationsAndGetValid(bookings valueobjects.Bookings) []valueobjects.Bookings {
+	combinationsChan := make(chan valueobjects.Bookings)
+	go bookings.GenerateAllCombinations(combinationsChan)
 
-	return domain.CheckValidCombinations(combinationsChan)
+	return valueobjects.CheckValidCombinations(combinationsChan)
 }
 
 func sortByMostProfitableBooking(calculations []valueobjects.Stats) {
@@ -30,10 +29,10 @@ func sortByMostProfitableBooking(calculations []valueobjects.Stats) {
 	})
 }
 
-func calculateProfits(combinations [][]domain.Booking) []valueobjects.Stats {
+func calculateProfits(combinations []valueobjects.Bookings) []valueobjects.Stats {
 	var calculationsPerCombination []valueobjects.Stats
 	for _, booking := range combinations {
-		statsForBookings := domain.CalcStats(booking)
+		statsForBookings := booking.CalcStats()
 		calculationsPerCombination = append(calculationsPerCombination, statsForBookings)
 	}
 	return calculationsPerCombination

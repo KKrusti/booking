@@ -1,9 +1,7 @@
 package domain
 
 import (
-	"github.com/KKrusti/booking/domain/valueobjects"
 	"github.com/KKrusti/booking/shared"
-	"sort"
 	"time"
 )
 
@@ -26,58 +24,10 @@ func (booking Booking) CalcProfit() float64 {
 	return shared.Round(profit)
 }
 
-func (booking Booking) getCheckoutDate() time.Time {
+func (booking Booking) GetCheckoutDate() time.Time {
 	checkinDate := shared.StringToTime(booking.Checkin)
 	checkoutDate := checkinDate.AddDate(0, 0, booking.Nights)
 	return checkoutDate
-}
-
-// IsValidBooking checks whether a booking combination dates are compatible or if they overlap.
-func isValidBooking(bookings []Booking) bool {
-	sortByCheckinDate(bookings)
-	for i := 0; i < len(bookings)-1; i++ {
-		currentCheckout := bookings[i].getCheckoutDate()
-		nextCheckin := shared.StringToTime(bookings[i+1].Checkin)
-		if nextCheckin.Before(currentCheckout) {
-			return false
-		}
-	}
-	return true
-}
-
-// sortByCheckinDate sorts all bookins from oldest to newest.
-func sortByCheckinDate(requests []Booking) {
-	sort.Slice(requests[:], func(i, j int) bool {
-		return requests[i].Checkin < requests[j].Checkin
-	})
-}
-
-// GenerateAllCombinations method that generates all combinations for given Bookings and sends each one through a channel
-// to be processed as soon as it is generated.
-func GenerateAllCombinations(ch chan []Booking, bookings []Booking) {
-	defer close(ch)
-	length := len(bookings)
-	for subsetBits := 1; subsetBits < (1 << length); subsetBits++ {
-		var subset []Booking
-		for booking := 0; booking < length; booking++ {
-			if (subsetBits>>booking)&1 == 1 {
-				subset = append(subset, bookings[booking])
-			}
-		}
-		ch <- subset
-	}
-}
-
-// CheckValidCombinations method that receives combinations through a channel and checks if they're valid or not. Only if it's
-// a valid combination it's sent through another channel to process it.
-func CheckValidCombinations(combinations chan []Booking) [][]Booking {
-	var validCombinations [][]Booking
-	for combination := range combinations {
-		if isValidBooking(combination) {
-			validCombinations = append(validCombinations, combination)
-		}
-	}
-	return validCombinations
 }
 
 func CreateBooking(id string, checkin string, nights int, sellingRate, margin float64) Booking {
@@ -109,40 +59,4 @@ func (booking Booking) CalcMaximum(maximum float64) float64 {
 
 func (booking Booking) GetProfitPerNight() float64 {
 	return booking.CalcTotalProfit() / float64(booking.Nights)
-}
-
-func CalcStats(bookings []Booking) valueobjects.Stats {
-	profitPerNight := make([]float64, len(bookings))
-
-	var requestIds []string
-	minimum, maximum, totalProfit, averageNight := 0.0, 0.0, 0.0, 0.0
-	for i := 0; i < len(bookings); i++ {
-		requestIds = append(requestIds, bookings[i].Id)
-		profitPerNight[i] = bookings[i].GetProfitPerNight()
-		totalProfit += bookings[i].CalcTotalProfit()
-		minimum = bookings[i].CalcMinimum(minimum)
-		if i == 0 {
-			minimum = bookings[i].GetProfitPerNight()
-		}
-		maximum = bookings[i].CalcMaximum(maximum)
-	}
-	averageNight = calcAverageNight(profitPerNight)
-
-	return valueobjects.Stats{
-		RequestIds:   requestIds,
-		AverageNight: averageNight,
-		MinimumNight: minimum,
-		MaximumNight: maximum,
-		TotalProfit:  totalProfit,
-	}
-}
-
-func calcAverageNight(profits []float64) float64 {
-	sumProfits := 0.00
-	for _, profit := range profits {
-		sumProfits += profit
-	}
-
-	average := sumProfits / float64(len(profits))
-	return shared.Round(average)
 }

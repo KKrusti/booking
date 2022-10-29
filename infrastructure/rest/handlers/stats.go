@@ -2,12 +2,11 @@ package handlers
 
 import (
 	"github.com/KKrusti/booking/application/useCases"
-	"github.com/KKrusti/booking/domain"
 	"github.com/gofiber/fiber"
 )
 
 func CalculateStats(c *fiber.Ctx) {
-	bookingRequest := &[]domain.Booking{}
+	bookingRequest := &[]BookingsRequestDTO{}
 
 	if err := c.BodyParser(bookingRequest); err != nil {
 		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -17,8 +16,10 @@ func CalculateStats(c *fiber.Ctx) {
 	}
 
 	//TODO add validator?
+	requestInDomain := mapDtoToDomain(*bookingRequest)
 
-	stats := useCases.CalculateStats(*bookingRequest)
+	stats := useCases.CalculateStats(requestInDomain)
+
 	responseDTO := FromDomain(stats)
 
 	c.JSON(responseDTO)
