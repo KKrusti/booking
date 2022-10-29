@@ -1,5 +1,7 @@
 package valueobjects
 
+import "sort"
+
 type Stats struct {
 	RequestIds   []string `json:"request_ids"`
 	TotalProfit  float64  `json:"total_profit"`
@@ -8,6 +10,12 @@ type Stats struct {
 	MaximumNight float64  `json:"max_night"`
 }
 
-func (stats Stats) IsMoreProfitableThan(comparison Stats) bool {
+func (stats Stats) isMoreProfitableThan(comparison Stats) bool {
 	return stats.TotalProfit > comparison.TotalProfit
+}
+
+func sortByMostProfitableBooking(calculations []Stats) {
+	sort.Slice(calculations[:], func(i, j int) bool {
+		return calculations[i].isMoreProfitableThan(calculations[j])
+	})
 }

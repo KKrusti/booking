@@ -34,8 +34,33 @@ func Test_IsMoreProfitable(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.args.currentStats.IsMoreProfitableThan(tt.args.newStats)
+			got := tt.args.currentStats.isMoreProfitableThan(tt.args.newStats)
 			assert.Equal(t, tt.want, got)
 		})
 	}
+}
+
+func Test_sortByMostProfitable(t *testing.T) {
+	lessProfitIds := []string{"A", "B"}
+	moreProfitIds := []string{"C", "D"}
+
+	calcsToSort := []Stats{
+		{
+			RequestIds:  lessProfitIds,
+			TotalProfit: 40,
+		},
+		{
+			RequestIds:  moreProfitIds,
+			TotalProfit: 53,
+		},
+	}
+
+	//before sorting
+	assert.Equal(t, calcsToSort[0].RequestIds, lessProfitIds)
+	assert.Equal(t, calcsToSort[1].RequestIds, moreProfitIds)
+
+	sortByMostProfitableBooking(calcsToSort)
+
+	assert.Equal(t, calcsToSort[0].RequestIds, moreProfitIds)
+	assert.Equal(t, calcsToSort[1].RequestIds, lessProfitIds)
 }

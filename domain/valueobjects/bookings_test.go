@@ -131,7 +131,7 @@ func Test_validBooking(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.args.request.IsValidBooking()
+			got := tt.args.request.isValidBooking()
 			assert.Equal(t, tt.want, got)
 		})
 	}
@@ -163,7 +163,7 @@ func Test_allCombinations(t *testing.T) {
 	request := Bookings{Bookings: []domain.Booking{{Id: "A"}, {Id: "B"}, {Id: "C"}}}
 
 	ch := make(chan Bookings)
-	go request.GenerateAllCombinations(ch)
+	go request.generateAllCombinations(ch)
 
 	var combination []Bookings
 	for received := range ch {
@@ -246,9 +246,94 @@ func Test_CheckValidCombinations(t *testing.T) {
 		ch <- combination3
 	}(ch)
 
-	gotCombinations := CheckValidCombinations(ch)
+	gotCombinations := filterValidCombinations(ch)
 
 	assert.Contains(t, gotCombinations, combination1)
 	assert.Contains(t, gotCombinations, combination2)
 	assert.NotContains(t, gotCombinations, combination3)
+}
+
+func Test_calculateProfits(t *testing.T) {
+	combinations := []Bookings{
+		{
+			Bookings: []domain.Booking{
+				{
+					Id:          "A",
+					Checkin:     "2022-01-01",
+					Nights:      5,
+					SellingRate: 300,
+					Margin:      31,
+				},
+				{
+					Id:          "B",
+					Checkin:     "2022-01-09",
+					Nights:      6,
+					SellingRate: 400,
+					Margin:      20,
+				},
+			},
+		},
+	}
+
+	gotStats := calculateProfits(combinations)
+
+	expectedStats := []Stats{
+		{
+			RequestIds:   []string{"A", "B"},
+			TotalProfit:  173,
+			AverageNight: 15.97,
+			MinimumNight: 13.33,
+			MaximumNight: 18.6,
+		},
+	}
+
+	assert.Equal(t, gotStats, expectedStats)
+}
+
+func Test_ProcessAllCombinations(t *testing.T) {
+	bookings := Bookings{
+		Bookings: []domain.Booking{
+			{
+				Id:          "A",
+				Checkin:     "2020-01-01",
+				Nights:      5,
+				SellingRate: 200,
+				Margin:      20,
+			},
+			{
+				Id:          "B",
+				Checkin:     "2020-01-04",
+				Nights:      4,
+				SellingRate: 156,
+				Margin:      5,
+			},
+			{
+				Id:          "C",
+				Checkin:     "2020-01-04",
+				Nights:      4,
+				SellingRate: 150,
+				Margin:      6,
+			},
+			{
+				Id:          "D",
+				Checkin:     "2020-01-10",
+				Nights:      4,
+				SellingRate: 160,
+				Margin:      30,
+			},
+		},
+	}
+
+	result := bookings.ProcessAllCombinations()
+
+	expectedStats := Stats{
+		RequestIds:   []string{"A", "D"},
+		TotalProfit:  88,
+		AverageNight: 10,
+		MinimumNight: 8,
+		MaximumNight: 12,
+	}
+
+	assert.Equal(t, expectedStats, result)
+
 }

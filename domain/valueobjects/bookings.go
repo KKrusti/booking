@@ -10,11 +10,14 @@ type Bookings struct {
 	Bookings []domain.Booking
 }
 
-// sortByCheckinDate sorts all bookins from oldest to newest.
-func (bookings Bookings) sortByCheckinDate() {
-	sort.Slice(bookings.Bookings[:], func(i, j int) bool {
-		return bookings.Bookings[i].Checkin < bookings.Bookings[j].Checkin
-	})
+func (bookings Bookings) ProcessAllCombinations() Stats {
+	combinationsChan := make(chan Bookings)
+	go bookings.generateAllCombinations(combinationsChan)
+	validCombinations := filterValidCombinations(combinationsChan)
+	allCalculations := calculateProfits(validCombinations)
+	sortByMostProfitableBooking(allCalculations)
+
+	return allCalculations[0]
 }
 
 func (bookings Bookings) CalcStats() Stats {
@@ -43,8 +46,25 @@ func (bookings Bookings) CalcStats() Stats {
 	}
 }
 
-// IsValidBooking checks whether a booking combination dates are compatible or if they overlap.
-func (bookings Bookings) IsValidBooking() bool {
+// sortByCheckinDate sorts all bookins from oldest to newest.
+func (bookings Bookings) sortByCheckinDate() {
+	sort.Slice(bookings.Bookings[:], func(i, j int) bool {
+		return bookings.Bookings[i].Checkin < bookings.Bookings[j].Checkin
+	})
+}
+
+// calculateProfits returns a slice with the stats of each combination.
+func calculateProfits(combinations []Bookings) []Stats {
+	var calculationsPerCombination []Stats
+	for _, booking := range combinations {
+		statsForBookings := booking.CalcStats()
+		calculationsPerCombination = append(calculationsPerCombination, statsForBookings)
+	}
+	return calculationsPerCombination
+}
+
+// isValidBooking checks whether a booking combination dates are compatible or if they overlap.
+func (bookings Bookings) isValidBooking() bool {
 	bookings.sortByCheckinDate()
 	for i := 0; i < len(bookings.Bookings)-1; i++ {
 		currentCheckout := bookings.Bookings[i].GetCheckoutDate()
@@ -56,21 +76,21 @@ func (bookings Bookings) IsValidBooking() bool {
 	return true
 }
 
-// CheckValidCombinations method that receives combinations through a channel and checks if they're valid or not. Only if it's
+// filterValidCombinations method that receives combinations through a channel and checks if they're valid or not. Only if it's
 // a valid combination it's sent through another channel to process it.
-func CheckValidCombinations(combinations chan Bookings) []Bookings {
+func filterValidCombinations(combinations chan Bookings) []Bookings {
 	var validCombinations []Bookings
 	for combination := range combinations {
-		if combination.IsValidBooking() {
+		if combination.isValidBooking() {
 			validCombinations = append(validCombinations, combination)
 		}
 	}
 	return validCombinations
 }
 
-// GenerateAllCombinations method that generates all combinations for given Bookings and sends each one through a channel
+// generateAllCombinations method that generates all combinations for given Bookings and sends each one through a channel
 // to be processed as soon as it is generated.
-func (bookings Bookings) GenerateAllCombinations(ch chan Bookings) {
+func (bookings Bookings) generateAllCombinations(ch chan Bookings) {
 	defer close(ch)
 	length := len(bookings.Bookings)
 	for subsetBits := 1; subsetBits < (1 << length); subsetBits++ {
