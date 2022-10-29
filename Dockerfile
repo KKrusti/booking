@@ -10,7 +10,5 @@ COPY *.go ./
 
 RUN go build -o /booking
 
-EXPOSE 3000
-
 CMD [ "/booking" ]
 

@@ -3,7 +3,7 @@ package handlers
 import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 func validateData(c *fiber.Ctx, bookingRequest *[]BookingsRequestDTO) bool {

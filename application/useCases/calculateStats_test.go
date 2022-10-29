@@ -9,7 +9,6 @@ import (
 
 func Test_CalculateStats(t *testing.T) {
 	type args struct {
-		//bookings []domain.Booking
 		bookings valueobjects.Bookings
 	}
 	tests := []struct {
@@ -17,8 +16,6 @@ func Test_CalculateStats(t *testing.T) {
 		args args
 		want valueobjects.Stats
 	}{
-		//Bookings{
-		//		[]domain.Booking{
 		{
 			name: "sample 1",
 			args: args{
