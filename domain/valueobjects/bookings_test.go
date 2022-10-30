@@ -172,7 +172,6 @@ func Test_allCombinations(t *testing.T) {
 
 	assert.Equal(t, 7, len(combination))
 
-	//a := []Booking{{id: "A"}}
 	a := Bookings{Bookings: []domain.Booking{{Id: "A"}}}
 	b := Bookings{Bookings: []domain.Booking{{Id: "B"}}}
 	c := Bookings{Bookings: []domain.Booking{{Id: "C"}}}
